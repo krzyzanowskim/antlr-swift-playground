@@ -152,7 +152,7 @@ availabilityCondition: '#available' '(' availabilityArguments ')' ;
 availabilityArguments: availabilityArgument (',' availabilityArguments)* ;
 availabilityArgument: platformName platformVersion | '*' ;
 platformName: 'iOS' | 'iOSApplicationExtension' | 'OSX' | 'OSXApplicationExtension' | 'watchOS'
- | 'watchOSApplicationExtension' | 'tvOS' | 'tvOSApplicationExtension' | 'macOS' ;
+ | 'watchOSApplicationExtension' | 'tvOS' | 'tvOSApplicationExtension' ;
 platformVersion: VersionLiteral | DecimalLiteral | FloatingPointLiteral ; // TODO: Find a way to make this only VersionLiteral
 
 // Generic Parameters and Arguments
@@ -226,7 +226,7 @@ importDeclaration : attributes? 'import' importKind? importPath  ;
 // Swift Language Reference does not have let
 importKind : 'typealias' | 'struct' | 'class' | 'enum' | 'protocol' | 'var' | 'func' | 'let'  ;
 importPath : importPathIdentifier | importPathIdentifier '.' importPath  ;
-importPathIdentifier : identifier | operatorOperator  ;
+importPathIdentifier : identifier | operatorRule  ;
 
 // GRAMMAR OF A CONSTANT DECLARATION
 
@@ -248,10 +248,9 @@ variableDeclaration
  ;
 
 variableDeclarationHead : attributes? declarationModifiers? 'var'  ;
-variableName : identifier ;
-
+variableName : identifier  ;
 getterSetterBlock : '{' getterClause setterClause?'}'  | '{' setterClause getterClause '}'  ;
-// declarationModifiers missing in the Swift 'Language Reference
+// declarationModifiers missing in the Swift Language Reference
 getterClause : attributes? declarationModifiers? 'get' codeBlock  ;
 // declarationModifiers missing in the Swift Language Reference
 setterClause : attributes? declarationModifiers? 'set' setterName? codeBlock  ;
@@ -280,7 +279,7 @@ functionDeclaration : functionHead functionName genericParameterClause? function
  ;
 
 functionHead : attributes? declarationModifiers? 'func'  ;
-functionName : identifier |  operatorOperator  ;
+functionName : identifier |  operatorRule  ;
 // rethrows is not marked as optional in the Swift Language Reference
 functionSignature : parameterClause ('throws' | 'rethrows')? functionResult? ;
 functionResult : '->' attributes? sType  ;
@@ -399,9 +398,9 @@ subscriptResult : '->' attributes? sType  ;
 // GRAMMAR OF AN OPERATOR DECLARATION
 
 operatorDeclaration : prefixOperatorDeclaration | postfixOperatorDeclaration | infixOperatorDeclaration  ;
-prefixOperatorDeclaration : 'prefix' 'operator' operatorOperator  ;
-postfixOperatorDeclaration : 'postfix' 'operator' operatorOperator  ;
-infixOperatorDeclaration : 'infix' 'operator' operatorOperator infixOperatorGroup? ;
+prefixOperatorDeclaration : 'prefix' 'operator' operatorRule  ;
+postfixOperatorDeclaration : 'postfix' 'operator' operatorRule  ;
+infixOperatorDeclaration : 'infix' 'operator' operatorRule infixOperatorGroup? ;
 infixOperatorGroup: ':' precedenceGroupName ;
 
 
@@ -426,7 +425,7 @@ precedenceGroupName: identifier ;
 
 pattern
  : wildcardPattern typeAnnotation?
- | wildcardPattern? identifierPattern typeAnnotation?
+ | identifierPattern typeAnnotation?
  | valueBindingPattern
  | tuplePattern typeAnnotation?
  | enumCasePattern
@@ -483,7 +482,7 @@ balancedToken
  | '[' balancedTokens? ']'
  | '{' balancedTokens? '}'
  // VersionLiteral and availabilityArgument are not in the Swift Language Reference
- | identifier | expression | contextSensitiveKeyword | literal | operatorOperator | VersionLiteral | availabilityArgument
+ | identifier | expression | contextSensitiveKeyword | literal | operatorRule | VersionLiteral | availabilityArgument
  // | Any punctuation except ( ,  ')' , '[' , ']' , { , or }
  // Punctuation is very ambiguous, interpreting punctuation as defined in www.thepunctuationguide.com
  | ':' | ';' | ',' | '!' | '<' | '>' | '-' | '\'' | '/' | '...' | '"'
@@ -559,7 +558,7 @@ typeCastingOperator
 // GRAMMAR OF A PRIMARY EXPRESSION
 
 primaryExpression
- : (identifier | operatorOperator | keyword | contextSensitiveKeyword) genericArgumentClause? // operator, keyword, and contextSensitiveKeyword are not mentioned in the Swift Language Reference
+ : (identifier | operatorRule | keyword | contextSensitiveKeyword) genericArgumentClause? // operator, keyword, and contextSensitiveKeyword are not mentioned in the Swift Language Reference
  | literalExpression
  | selfExpression
  | superclassExpression
@@ -667,7 +666,10 @@ selectorExpression
 
 // GRAMMAR OF A KEY PATH EXPRESSION
 
-keyPathExpression: '#keyPath' '(' expression ')' ;
+keyPathExpression
+ : '#keyPath' '(' expression ')'
+ | '\\' expression
+;
 
 // GRAMMAR OF A POSTFIX EXPRESSION
 
@@ -695,8 +697,8 @@ postfixExpression
 functionCallArgumentClause: '(' functionCallArgumentList? ')' ;
 functionCallArgumentList: functionCallArgument (',' functionCallArgument)* ;
 // (expression | operator) is optional to handle selector expressions (see #425 for example)
-functionCallArgument: (functionCallIdentifier ':') (expression | operatorOperator)?
-  | (functionCallIdentifier ':')? (expression | operatorOperator) ;
+functionCallArgument: (functionCallIdentifier ':') (expression | operatorRule)?
+  | (functionCallIdentifier ':')? (expression | operatorRule) ;
 // SwiftLanguageReference does not have keyword
 functionCallIdentifier: identifier | keyword ;
 
@@ -743,7 +745,7 @@ explicitMemberExpression
 operatorHead: '=' | '<' | '>' | '!' | '*' | '&' | '==' | '?' | '-' | '&&' | '||' | '/' | '>=' | '->' | OperatorHead;
 operatorCharacter: operatorHead | OperatorCharacter;
 
-operatorOperator: operatorHead operatorCharacter*
+operatorRule: operatorHead operatorCharacter*
   | '..' (operatorCharacter)*
   | '...'
   ;
@@ -772,21 +774,21 @@ it must have whitespace around both sides."
  it is treated as a binary operator. As an example, the + operator in a+b
   and a + b is treated as a binary operator."
 */
-binaryOperator : operatorOperator ;
+binaryOperator : operatorRule ;
 
 /**
  "If an operator has whitespace on the left side only, it is treated as a
  prefix unary operator. As an example, the ++ operator in a ++b is treated
  as a prefix unary operator."
 */
-prefixOperator : operatorOperator  ; // only if space on left but not right
+prefixOperator : operatorRule  ; // only if space on left but not right
 
 /**
  "If an operator has whitespace on the right side only, it is treated as a
  postfix unary operator. As an example, the ++ operator in a++ b is treated
  as a postfix unary operator."
  */
-postfixOperator : operatorOperator  ;
+postfixOperator : operatorRule  ;
 
 // Types
 
@@ -810,7 +812,7 @@ functionTypeArgumentClause: '(' ')'
  | '(' functionTypeArgumentList '...'? ')' ;
 functionTypeArgumentList: functionTypeArgument (',' functionTypeArgument)* ;
 functionTypeArgument: attributes? 'inout'? sType | argumentLabel typeAnnotation ;
-argumentLabel: wildcardPattern? identifier ;
+argumentLabel: identifier ;
 
 arrayType: '[' sType ']' ;
 
@@ -831,7 +833,7 @@ typeIdentifier
  | typeName genericArgumentClause? '.' typeIdentifier
  ;
 
-typeName : wildcardPattern? identifier ;
+typeName : identifier ;
 
 // GRAMMAR OF A TUPLE TYPE
 
@@ -886,7 +888,7 @@ platformCondition
  | 'swift' '(' '>=' swiftVersion ')'
  ;
 
-operatingSystem: 'OSX' | 'iOS' | 'watchOS' | 'tvOS' | 'macOS' ;
+operatingSystem: 'OSX' | 'iOS' | 'watchOS' | 'tvOS' ;
 architecture: 'i386' | 'x86_64' | 'arm' | 'arm64' ;
 swiftVersion: FloatingPointLiteral ;
 
@@ -928,7 +930,7 @@ contextSensitiveKeyword :
  'lazy' | 'left' | 'mutating' | 'none' | 'nonmutating' | 'optional' | 'operator' | 'override' | 'postfix' | 'precedence' |
  'prefix' | 'Protocol' | 'required' | 'right' | 'set' | 'Type' | 'unowned' | 'weak' | 'willSet' |
  'iOS' | 'iOSApplicationExtension' | 'OSX' | 'OSXApplicationExtension­' | 'watchOS' | 'x86_64' |
- 'arm' | 'arm64' | 'i386' | 'os' | 'arch' | 'safe' | 'tvOS' | 'file' | 'line' | 'default' | 'Self' | 'var' | 'macOS'
+ 'arm' | 'arm64' | 'i386' | 'os' | 'arch' | 'safe' | 'tvOS' | 'file' | 'line' | 'default' | 'Self' | 'var'
  ;
 
 grammarString:
@@ -984,10 +986,10 @@ fragment IdentifierHead : [a-zA-Z] | '_'
  | [\uF900-\uFD3D] | [\uFD40-\uFDCF] | [\uFDF0-\uFE1F] | [\uFE30-\uFE44]
  | [\uFE47-\uFFFD]
 /*
- | U+10000-U+1FFFD | U+20000-U+2FFFD | U+30000-U+3FFFD | U+40000-U+4FFFD
- | U+50000-U+5FFFD | U+60000-U+6FFFD | U+70000-U+7FFFD | U+80000-U+8FFFD
- | U+90000-U+9FFFD | U+A0000-U+AFFFD | U+B0000-U+BFFFD | U+C0000-U+CFFFD
- | U+D0000-U+DFFFD or U+E0000-U+EFFFD
+ | U+10000–U+1FFFD | U+20000–U+2FFFD | U+30000–U+3FFFD | U+40000–U+4FFFD
+ | U+50000–U+5FFFD | U+60000–U+6FFFD | U+70000–U+7FFFD | U+80000–U+8FFFD
+ | U+90000–U+9FFFD | U+A0000–U+AFFFD | U+B0000–U+BFFFD | U+C0000–U+CFFFD
+ | U+D0000–U+DFFFD or U+E0000–U+EFFFD
 */
  ;
 

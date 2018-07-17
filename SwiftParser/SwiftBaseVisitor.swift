@@ -1703,7 +1703,7 @@ open class SwiftBaseVisitor<T>: AbstractParseTreeVisitor<T> {
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	open func visitOperatorOperator(_ ctx: SwiftParser.OperatorOperatorContext) -> T? { return visitChildren(ctx) }
+	open func visitOperatorRule(_ ctx: SwiftParser.OperatorRuleContext) -> T? { return visitChildren(ctx) }
 	/**
 	 * {@inheritDoc}
 	 *

@@ -1,4 +1,4 @@
-// Generated from /Users/marcinkrzyzanowski/Devel/antlr4/runtime/Swift/Tests/Antlr4Tests/VisitorBasic.g4 by ANTLR 4.7.1
+// Generated from /Users/marcinkrzyzanowski/Devel/antlr-playground/Antlr4-runtime/Tests/Antlr4Tests/VisitorBasic.g4 by ANTLR 4.7.1
 import Antlr4
 
 open class VisitorBasicLexer: Lexer {

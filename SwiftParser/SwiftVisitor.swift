@@ -2434,12 +2434,12 @@ open class SwiftVisitor<T>: ParseTreeVisitor<T> {
 	}
 
 	/**
-	 * Visit a parse tree produced by {@link SwiftParser#operatorOperator}.
+	 * Visit a parse tree produced by {@link SwiftParser#operatorRule}.
 	- Parameters:
 	  - ctx: the parse tree
 	- returns: the visitor result
 	 */
-	open func visitOperatorOperator(_ ctx: SwiftParser.OperatorOperatorContext) -> T {
+	open func visitOperatorRule(_ ctx: SwiftParser.OperatorRuleContext) -> T {
 	 	fatalError(#function + " must be overridden")
 	}
 

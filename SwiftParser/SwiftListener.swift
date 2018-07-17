@@ -2927,17 +2927,17 @@ public protocol SwiftListener: ParseTreeListener {
 	 */
 	func exitOperatorCharacter(_ ctx: SwiftParser.OperatorCharacterContext)
 	/**
-	 * Enter a parse tree produced by {@link SwiftParser#operatorOperator}.
+	 * Enter a parse tree produced by {@link SwiftParser#operatorRule}.
 	 - Parameters:
 	   - ctx: the parse tree
 	 */
-	func enterOperatorOperator(_ ctx: SwiftParser.OperatorOperatorContext)
+	func enterOperatorRule(_ ctx: SwiftParser.OperatorRuleContext)
 	/**
-	 * Exit a parse tree produced by {@link SwiftParser#operatorOperator}.
+	 * Exit a parse tree produced by {@link SwiftParser#operatorRule}.
 	 - Parameters:
 	   - ctx: the parse tree
 	 */
-	func exitOperatorOperator(_ ctx: SwiftParser.OperatorOperatorContext)
+	func exitOperatorRule(_ ctx: SwiftParser.OperatorRuleContext)
 	/**
 	 * Enter a parse tree produced by {@link SwiftParser#binaryOperator}.
 	 - Parameters:

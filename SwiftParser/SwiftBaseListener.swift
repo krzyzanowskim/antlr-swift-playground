@@ -3148,13 +3148,13 @@ open class SwiftBaseListener: SwiftListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	open func enterOperatorOperator(_ ctx: SwiftParser.OperatorOperatorContext) { }
+	open func enterOperatorRule(_ ctx: SwiftParser.OperatorRuleContext) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	open func exitOperatorOperator(_ ctx: SwiftParser.OperatorOperatorContext) { }
+	open func exitOperatorRule(_ ctx: SwiftParser.OperatorRuleContext) { }
 
 	/**
 	 * {@inheritDoc}
