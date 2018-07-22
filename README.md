@@ -3,7 +3,7 @@
 A macOS setup to play with [Antlr](http://www.antlr.org/) and Swift parser.
 
 
-##Installation
+## Installation
 
 Clone
 
@@ -17,14 +17,14 @@ Playground sources
 $ cd antlr-swift-playground/playground
 ```
 
-###Swift Package Manager
+### Swift Package Manager
 
 ```
 $ cd antlr-swift-playground/playground
 $ swift run
 ```
 
-###Xcode project
+### Xcode project
 
 ```
 $ cd antlr-playground/playground
