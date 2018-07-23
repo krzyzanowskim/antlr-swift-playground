@@ -27,7 +27,7 @@ $ swift run
 ### Xcode project
 
 ```
-$ cd antlr-playground/playground
+$ cd antlr-swift-playground/playground
 $ swift package generate-xcodeproj
 generated: ./playground.xcodeproj
 ```
